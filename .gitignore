@@ -1,0 +1,20 @@
+# Compiled python modules.
+*.pyc
+
+# Byte-compiled
+_pycache__/
+.cache/
+
+# Bazel
+/.bazelrc
+/bazel-*
+
+# Type checking
+.pytype/
+
+# Other
+*.DS_Store
+
+# IDEs
+.idea
+.vscode/
