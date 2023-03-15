@@ -1,0 +1,58 @@
+[project]
+name = "tfp-causalimpact"
+description = "Inferring causal effects using Bayesian Structural Time-Series models"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [{name = "TFP CausalImpact Authors", email="no-reply@google.com"}]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: Apache Software License",
+    "Intended Audience :: Science/Research",
+]
+keywords = []
+
+dependencies = [
+    "Jinja2",
+    "altair",
+    "numpy",
+    "pandas",
+    "tensorflow",
+    "tensorflow-probability"
+]
+
+dynamic = ["version"]
+
+[project.urls]
+homepage = "https://github.com/google/tfp-causalimpact"
+repository = "https://github.com/google/tfp-causalimpact"
+
+[project.optional-dependencies]
+# Development deps (unittest, linting, formating,...)
+# Installed through `pip install .[dev]`
+dev = [
+    "absl-py",
+    "pylint>=2.6.0",
+    "pyink",
+    "pytest",
+    "pytest-xdist",
+    "statsmodels"
+]
+
+[tool.flit.module]
+name = "causalimpact"
+
+[tool.flit.sdist]
+exclude = ["causalimpact/testdata"]
+exclude = ["causalimpact/*_test.py"]
+
+[tool.pyink]
+line-length = 80
+preview = true
+pyink-indentation = 2
+pyink-use-majority-quotes = true
+
+[build-system]
+requires = ["flit_core >=3.5,<4"]
+build-backend = "flit_core.buildapi"

@@ -15,6 +15,8 @@
 
 """Import commonly used modules and classes so user doesn't have to."""
 
+__version__ = "0.1.0"
+
 from causalimpact.causalimpact_lib import CausalImpactAnalysis
 from causalimpact.causalimpact_lib import DataOptions
 from causalimpact.causalimpact_lib import fit_causalimpact
