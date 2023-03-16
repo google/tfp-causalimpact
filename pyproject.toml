@@ -44,8 +44,7 @@ dev = [
 name = "causalimpact"
 
 [tool.flit.sdist]
-exclude = ["causalimpact/testdata"]
-exclude = ["causalimpact/*_test.py"]
+exclude = ["causalimpact/testdata", "causalimpact/*_test.py"]
 
 [tool.pyink]
 line-length = 80
