@@ -235,14 +235,15 @@ def _create_plot_component_df(series: pd.DataFrame,
   # `scale` is for whether `value` is on the original scale (scale of the
   # observed data), the pointwise scale, or the cumulative scale.
   stats_to_drop = "_upper|_lower|_mean|_median|_std"
-  sub_df["scale"] = sub_df["scale_stat"].str.replace(stats_to_drop, "")
+  sub_df["scale"] = sub_df["scale_stat"].str.replace(
+      stats_to_drop, "", regex=True)
   sub_df.loc[sub_df["scale"].str.contains("observed|posterior"),
              "scale"] = "original"
 
   # `stat` is for whether `value` represents the observed data or the mean or
   # median estimates.
   sub_df["stat"] = sub_df["scale_stat"].str.replace(
-      "posterior_|point_effects_|cumulative_effects_", "")
+      "posterior_|point_effects_|cumulative_effects_", "", regex=True)
   sub_df.drop(columns=["scale_stat"], inplace=True)
 
   # For bands and std, reshape the data again so that "upper" and "lower" (for
