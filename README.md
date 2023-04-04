@@ -25,7 +25,7 @@ Google by Kay Brodersen and Alain Hauser.  TFP CausalImpact is based on both
 the original R package and on a Python version
 https://github.com/dafiti/causalimpact developed at Dafiti by Willian Fuks.
 TFP CausalImpact was developed at Google by Colin Carroll, David Moore,
-Jacob Burnim, Kyle Loveless, and others.
+Jacob Burnim, Kyle Loveless, and Susanna Makela.
 
 *This is not an officially supported Google product.*
 
