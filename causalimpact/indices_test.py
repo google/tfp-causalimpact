@@ -106,6 +106,11 @@ class WrapperTest(parameterized.TestCase):
           "post_period": ("2016-02-20 22:43:10", "2016-02-20 22:56:20"),
       },
       {
+          "testcase_name": "_string_periods_with_rounding",
+          "pre_period": ("2016-02-20 22:41:15", "2016-02-20 22:43:05"),
+          "post_period": ("2016-02-20 22:43:06", "2016-02-20 22:56:28"),
+      },
+      {
           "testcase_name":
               "_datetime_periods",
           "pre_period": (pd.to_datetime("2016-02-20 22:41:20"),
@@ -113,6 +118,15 @@ class WrapperTest(parameterized.TestCase):
           "post_period": (pd.to_datetime("2016-02-20 22:43:10"),
                           pd.to_datetime("2016-02-20 22:56:20")),
       },
+      {
+          "testcase_name":
+              "_datetime_periods_with_rounding",
+          "pre_period": (pd.to_datetime("2016-02-20 22:41:11"),
+                         pd.to_datetime("2016-02-20 22:43:07")),
+          "post_period": (pd.to_datetime("2016-02-20 22:43:09"),
+                          pd.to_datetime("2016-02-20 22:56:23")),
+      },
+
   ])
   def testParseAndValidateData(self, pre_period, post_period):
     """Test different datetime arguments are correctly handled."""

@@ -122,16 +122,14 @@ def _check_period(period: OutputPeriodType,
   # Allow indices (or more likely) dates that are not aligned with the original
   # data. The period is rounded to prefer shorter periods rather than partially
   # covered periods.
-  try:
-    period_start_idx = data.index.get_loc(period[0], method="bfill")
-  except KeyError as e:
-    raise ValueError("Aligned period start not found in the index.") from e
+  period_start_idx = data.index.get_indexer([period[0]], method="bfill")[0]
+  if period_start_idx == -1:
+    raise ValueError("Aligned period start not found in the index.")
   period_start = data.index[period_start_idx]
 
-  try:
-    period_end_idx = data.index.get_loc(period[1], method="ffill")
-  except KeyError as e:
-    raise ValueError("Aligned period end not found in the index.") from e
+  period_end_idx = data.index.get_indexer([period[1]], method="ffill")[0]
+  if period_end_idx == -1:
+    raise ValueError("Aligned period end not found in the index.")
   period_end = data.index[period_end_idx]
 
   return (period_start, period_end)
