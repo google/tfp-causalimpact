@@ -18,7 +18,7 @@ these assumptions for any given application is critical for obtaining valid
 conclusions.
 
 TFP CausalImpact is a Python +
-[TensorFlow Probability](https://github.com/tensorflow/probability/tree/main/tensorflow_probability)
+[TensorFlow Probability](https://github.com/tensorflow/probability)
 implementation of the
 [CausalImpact](https://google.github.io/CausalImpact/) R package developed at
 Google by Kay Brodersen and Alain Hauser.  TFP CausalImpact is based on both
@@ -33,3 +33,36 @@ Jacob Burnim, Kyle Loveless, and Susanna Makela.
     Kay H. Brodersen, Fabian Gallusser, Jim Koehler, Nicolas Remy,
     Steven L. Scott.  Annals of Applied Statistics, vol. 9 (2015), pp. 247-274.
     https://research.google/pubs/pub41854/
+
+
+## Getting Started
+
+TFP CausalImpact can be installed via `pip`:
+
+```
+pip install tfp-causalimpact
+```
+
+And imported as:
+
+```
+import causalimpact
+```
+
+See also the [Quick-Start Guide](https://github.com/google/tfp-causalimpact/blob/main/causalimpact/docs/quickstart.ipynb).
+
+
+## Development
+
+Clone TFP CausalImpact, install the development dependencies, and run the unit
+tests with:
+
+```
+git clone https://github.com/google/tfp-causalimpact.git tfp_causalimpact
+cd tfp_causalimpact
+
+pip install flit
+flit install --only-deps
+
+pytest -vv -n auto
+```
