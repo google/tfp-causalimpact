@@ -49,7 +49,7 @@ And imported as:
 import causalimpact
 ```
 
-See also the [Quick-Start Guide](https://github.com/google/tfp-causalimpact/blob/main/causalimpact/docs/quickstart.ipynb).
+See also the [Quick-Start Guide](https://github.com/google/tfp-causalimpact/blob/main/docs/quickstart.ipynb).
 
 
 ## Development
