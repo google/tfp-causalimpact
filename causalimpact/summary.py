@@ -35,7 +35,7 @@ Relative effect (s.d.)    {{'{0:.1%}'.format(summary.average.rel_effect)}} ({{'{
 Posterior tail-area probability p: {{p_value|round(3)}}
 Posterior prob. of a causal effect: {{'{0:.2%}'.format(1 - p_value)}}
 
-For more details run the command: ci.summary(impact, output_format="report")
+For more details run the command: summary(impact, output_format="report")
 """
 
 report_text = """
