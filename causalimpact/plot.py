@@ -265,7 +265,7 @@ def _create_plot_component_df(series: pd.DataFrame,
   # For std, use the posterior mean and std to create lower and upper bounds.
   if component == "std":
     z_val = tfp.distributions.Normal(
-        loc=0., scale=1.).quantile(1.0 - alpha / 2.0)
+        loc=0., scale=1.).quantile(1.0 - alpha / 2.0).numpy()
     sub_df["lower"] = sub_df["mean"] - z_val * sub_df["std"]
     sub_df["upper"] = sub_df["mean"] + z_val * sub_df["std"]
     sub_df.drop(columns={"mean", "std"}, inplace=True)

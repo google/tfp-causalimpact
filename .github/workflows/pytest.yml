@@ -1,0 +1,36 @@
+name: Unit Tests
+
+# Allow to trigger the workflow manually (e.g. when deps changes)
+on: [push, workflow_dispatch]
+
+jobs:
+  pytest-job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.11"]
+
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.python-version }}
+      cancel-in-progress: true
+
+    steps:
+    - uses: actions/checkout@v3
+
+    # Install deps
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+        # Uncomment to cache of pip dependencies (if tests too slow)
+        # cache: pip
+        # cache-dependency-path: '**/pyproject.toml'
+
+    - run: pip --version
+    - run: pip install flit
+    - run: flit install --only-deps
+    - run: pip freeze
+
+    # Run tests (in parallel)
+    - name: Run tests
+      run: pytest -vv -n auto
