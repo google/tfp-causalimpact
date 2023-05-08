@@ -16,6 +16,7 @@
 """TFP-based CausalImpact implementation via fit_causalimpact."""
 
 import dataclasses
+import logging
 import math
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -252,82 +253,90 @@ def fit_causalimpact(data: pd.DataFrame,
   Returns:
     A CausalImpactAnalysis instance summarizing the effect of the intervention.
   """
-  data_options = data_options if data_options is not None else DataOptions()
-  model_options = model_options if model_options is not None else ModelOptions()
-  inference_options = inference_options if inference_options is not None else (
-      InferenceOptions())
+  # Suppress verbose TensorFlow WARNING and INFO messages, which are not useful
+  # for TFP CausalImpact users.
+  tf_log_level = tf.get_logger().level
+  tf.get_logger().setLevel(logging.ERROR)
+  try:
+    data_options = data_options if data_options is not None else DataOptions()
+    model_options = (model_options if model_options is not None
+                     else ModelOptions())
+    inference_options = (inference_options if inference_options is not None
+                         else InferenceOptions())
 
-  # WARNING: These are implementation details, and have no guarantees of
-  # continuing to work or be respected.
-  experimental_model = kwargs.pop("experimental_model", None)
-  experimental_tf_function_cache_key_addition = kwargs.pop(
-      "experimental_tf_function_cache_key_addition", 0)
-  if kwargs:
-    raise TypeError(f"Received unknown {kwargs=}")
+    # WARNING: These are implementation details, and have no guarantees of
+    # continuing to work or be respected.
+    experimental_model = kwargs.pop("experimental_model", None)
+    experimental_tf_function_cache_key_addition = kwargs.pop(
+        "experimental_tf_function_cache_key_addition", 0)
+    if kwargs:
+      raise TypeError(f"Received unknown {kwargs=}")
 
-  ci_data = cid.CausalImpactData(
-      data=data,
-      pre_period=pre_period,
-      post_period=post_period,
-      outcome_column=data_options.outcome_column,
-      standardize_data=data_options.standardize_data,
-      dtype=data_options.dtype)
-  posterior_samples, posterior_means, posterior_trajectories = _train_causalimpact_sts(
-      ci_data=ci_data,
-      prior_level_sd=model_options.prior_level_sd,
-      seed=seed,
-      num_results=inference_options.num_results,
-      num_warmup_steps=inference_options.num_warmup_steps,
-      model=experimental_model,
-      dtype=data_options.dtype,
-      seasons=model_options.seasons,
-      experimental_tf_function_cache_key_addition=experimental_tf_function_cache_key_addition
-  )
-  series, summary = _compute_impact(
-      posterior_means=posterior_means,
-      posterior_trajectories=posterior_trajectories,
-      ci_data=ci_data,
-      alpha=alpha)
+    ci_data = cid.CausalImpactData(
+        data=data,
+        pre_period=pre_period,
+        post_period=post_period,
+        outcome_column=data_options.outcome_column,
+        standardize_data=data_options.standardize_data,
+        dtype=data_options.dtype)
+    posterior_samples, posterior_means, posterior_trajectories = _train_causalimpact_sts(
+        ci_data=ci_data,
+        prior_level_sd=model_options.prior_level_sd,
+        seed=seed,
+        num_results=inference_options.num_results,
+        num_warmup_steps=inference_options.num_warmup_steps,
+        model=experimental_model,
+        dtype=data_options.dtype,
+        seasons=model_options.seasons,
+        experimental_tf_function_cache_key_addition=experimental_tf_function_cache_key_addition
+    )
+    series, summary = _compute_impact(
+        posterior_means=posterior_means,
+        posterior_trajectories=posterior_trajectories,
+        ci_data=ci_data,
+        alpha=alpha)
 
-  if posterior_samples.seasonal_levels.shape[-1] > 0:
-    # If we have k seasonal effects, with num_seasons[0], ..., num_seasons[k-1]
-    # distinct seasons respectively, then each seasonal effect's latent state
-    # has dimension num_seasons[0]-1, ..., num_seasons[k-1]-1 and the shape
-    # of posterior_samples.seasonal_levels is
-    #     batch_shape [timeseries_length, total_seasonal_latent_dim]
-    # where
-    #    total_seasonal_latent_dim = num_seasons[0]-1, ..., num_seasons[k-1]-1 .
-    #
-    # And at each timestep, each seasonal effect's contribution to the observed
-    # value is the 0-th element of its latent state.  Here we extract these 0-th
-    # elements in order to return  the contribution of each seasonal effect at
-    # each time step.
-    seasonal_levels = []
-    index = 0
-    for season in model_options.seasons:
-      seasonal_levels.append(posterior_samples.seasonal_levels[..., index])
-      index += season.num_seasons - 1
-    seasonal_levels = tf.stack(seasonal_levels, axis=-1)
-  else:
-    # If there are no seasonal effects, then we can just use
-    # posterior_samples.seasonal_levels, which has the correct shape:
-    #     batch_shape + [num_samples, timeseries_length, 0]
-    seasonal_levels = posterior_samples.seasonal_levels
+    if posterior_samples.seasonal_levels.shape[-1] > 0:
+      # If we have k seasonal effects, with num_seasons[0],...,num_seasons[k-1]
+      # distinct seasons respectively, then each seasonal effect's latent state
+      # has dimension num_seasons[0]-1, ..., num_seasons[k-1]-1 and the shape
+      # of posterior_samples.seasonal_levels is
+      #   batch_shape [timeseries_length, total_seasonal_latent_dim]
+      # where
+      #   total_seasonal_latent_dim = num_seasons[0]-1, ..., num_seasons[k-1]-1.
+      #
+      # And at each timestep, each seasonal effect's contribution to the
+      # observed value is the 0-th element of its latent state.  Here we extract
+      # these 0-th elements in order to return  the contribution of each
+      # seasonal effect at each time step.
+      seasonal_levels = []
+      index = 0
+      for season in model_options.seasons:
+        seasonal_levels.append(posterior_samples.seasonal_levels[..., index])
+        index += season.num_seasons - 1
+      seasonal_levels = tf.stack(seasonal_levels, axis=-1)
+    else:
+      # If there are no seasonal effects, then we can just use
+      # posterior_samples.seasonal_levels, which has the correct shape:
+      #     batch_shape + [num_samples, timeseries_length, 0]
+      seasonal_levels = posterior_samples.seasonal_levels
 
-  # Translate posterior samples to a CausalImpact-specific object,
-  # rather than exposing GibbsSamplerState.
-  ci_posterior_samples = CausalImpactPosteriorSamples(
-      observation_noise_scale=posterior_samples.observation_noise_scale,
-      level_scale=posterior_samples.level_scale,
-      level=posterior_samples.level,
-      weights=(posterior_samples.weights
-               if posterior_samples.weights.shape[1] > 0 else None),
-      seasonal_drift_scales=(
-          posterior_samples.seasonal_drift_scales
-          if posterior_samples.seasonal_drift_scales.shape[-1] > 0 else None),
-      seasonal_levels=seasonal_levels
-  )
-  return CausalImpactAnalysis(series, summary, ci_posterior_samples)
+    # Translate posterior samples to a CausalImpact-specific object,
+    # rather than exposing GibbsSamplerState.
+    ci_posterior_samples = CausalImpactPosteriorSamples(
+        observation_noise_scale=posterior_samples.observation_noise_scale,
+        level_scale=posterior_samples.level_scale,
+        level=posterior_samples.level,
+        weights=(posterior_samples.weights
+                 if posterior_samples.weights.shape[1] > 0 else None),
+        seasonal_drift_scales=(
+            posterior_samples.seasonal_drift_scales
+            if posterior_samples.seasonal_drift_scales.shape[-1] > 0 else None),
+        seasonal_levels=seasonal_levels
+    )
+    return CausalImpactAnalysis(series, summary, ci_posterior_samples)
+  finally:
+    tf.get_logger().setLevel(tf_log_level)
 
 
 # Always use graph mode: eager mode is very, very slow. The non-compiled version
