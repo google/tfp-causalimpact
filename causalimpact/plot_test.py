@@ -15,6 +15,8 @@
 
 """Tests for plot.py."""
 
+import collections
+
 from absl.testing import absltest
 from absl.testing import parameterized
 
@@ -23,6 +25,16 @@ from causalimpact.plot import _create_plot_component_df
 import numpy as np
 import pandas as pd
 
+
+def _recursively_sorted(d):
+  if not isinstance(d, dict):
+    return d
+
+  ret = collections.OrderedDict()
+  for k, v in sorted(d.items()):
+    ret[k] = _recursively_sorted(v)
+
+  return ret
 
 expected_classic_dict_four_vlines = {
     "facet": {
@@ -705,6 +717,10 @@ expected_legend_dict = {
 
 
 class PlotTest(parameterized.TestCase):
+
+  def assertDictEqual(self, a, b, msg=None):  # pylint: disable=arguments-renamed
+    super().assertDictEqual(
+        _recursively_sorted(a), _recursively_sorted(b), msg=msg)
 
   @classmethod
   def setUpClass(cls):
