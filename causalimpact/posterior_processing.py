@@ -57,7 +57,7 @@ def calculate_trajectory_quantiles(
   quantiles_df.columns = column_names
   quantiles_df.index = trajectories.index
 
-  return quantiles_df
+  return quantiles_df  # pytype: disable=bad-return-type  # pandas-15-upgrade
 
 
 def process_posterior_quantities(ci_data: cid.CausalImpactData,
