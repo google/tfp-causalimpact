@@ -26,7 +26,7 @@ def calculate_trajectory_quantiles(
     trajectories: pd.DataFrame,
     column_prefix: Text = "predicted",
     quantiles: Tuple[float, float] = (0.025, 0.975)
-) -> pd.DataFrame:
+) -> pd.DataFrame | pd.Series:
   """Calculates timepoint-wise quantiles of trajectories.
 
   This function is used to calculate timepoint-wise quantiles for both the
@@ -57,7 +57,7 @@ def calculate_trajectory_quantiles(
   quantiles_df.columns = column_names
   quantiles_df.index = trajectories.index
 
-  return quantiles_df  # pytype: disable=bad-return-type  # pandas-15-upgrade
+  return quantiles_df
 
 
 def process_posterior_quantities(ci_data: cid.CausalImpactData,
