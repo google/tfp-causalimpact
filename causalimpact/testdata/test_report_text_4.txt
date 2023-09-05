@@ -34,5 +34,9 @@ in the response variable in the absence of the intervention.
 
 The probability of obtaining this effect by chance is very small
 (Bayesian one-sided tail-area probability p = 0.05).
-This means the causal effect can be considered statistically
-significant.
+This means the effect is statistically significant. It can be
+considered causal if the model assumptions are satisfied.
+
+
+For more details, including the model assumptions behind the method, see
+https://google.github.io/CausalImpact/.
