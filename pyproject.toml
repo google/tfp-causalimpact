@@ -2,7 +2,7 @@
 name = "tfp-causalimpact"
 description = "Inferring causal effects using Bayesian Structural Time-Series models"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = {file = "LICENSE"}
 authors = [{name = "TFP CausalImpact Authors", email="no-reply@google.com"}]
 classifiers = [

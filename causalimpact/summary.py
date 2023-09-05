@@ -33,7 +33,7 @@ Relative effect (s.d.)    {{'{0:.1%}'.format(summary.average.rel_effect)}} ({{'{
 {{CI(alpha)}}                    [{{'{0:.1%}'.format([summary.average.rel_effect_lower, summary.average.rel_effect_upper]|min)}}, {{'{0:.1%}'.format([summary.average.rel_effect_upper, summary.average.rel_effect_lower]|max)}}]{{add_remaining_spaces(4 + '{0:.1%}'.format([summary.average.rel_effect_lower, summary.average.rel_effect_upper]|min)|length + '{0:.1%}'.format([summary.average.rel_effect_upper, summary.average.rel_effect_lower]|max)|length)}}[{{'{0:.1%}'.format([summary.cumulative.rel_effect_lower, summary.cumulative.rel_effect_upper]|min)}}, {{'{0:.1%}'.format([summary.cumulative.rel_effect_upper, summary.cumulative.rel_effect_lower]|max)}}]
 
 Posterior tail-area probability p: {{p_value|round(3)}}
-Posterior prob. of a causal effect: {{'{0:.2%}'.format(1 - p_value)}}
+Posterior probability of an effect: {{'{0:.2%}'.format(1 - p_value)}}
 
 For more details run the command: summary(impact, output_format="report")
 """
@@ -112,15 +112,18 @@ correlate well with the response variable during the learning period.
 
 The probability of obtaining this effect by chance is very small
 (Bayesian one-sided tail-area probability p = {{p_value | round(3)}}).
-This means the causal effect can be considered statistically
-significant.
+This means the effect is statistically significant. It can be
+considered causal if the model assumptions are satisfied.
 {%- else %}
 
 The probability of obtaining this effect by chance is p = {{'{0:.0%}'.format(p_value)}}.
 This means the effect may be spurious and would generally not be
 considered statistically significant.
-{%- endif -%}
-"""
+{%- endif %}
+
+
+For more details, including the model assumptions behind the method, see
+https://google.github.io/CausalImpact/."""
 
 SUMMARY_TMPL = Template(summary_text)
 REPORT_TMPL = Template(report_text)

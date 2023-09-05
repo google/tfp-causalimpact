@@ -11,6 +11,6 @@ Relative effect (s.d.)    12.3% (0.1%)       23.3% (10.0%)
 90% CI                    [14.3%, 34.3%]     [13.3%, 33.3%]
 
 Posterior tail-area probability p: 0.459
-Posterior prob. of a causal effect: 54.07%
+Posterior probability of an effect: 54.07%
 
 For more details run the command: summary(impact, output_format="report")

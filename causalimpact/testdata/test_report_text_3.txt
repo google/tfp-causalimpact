@@ -41,3 +41,7 @@ correlate well with the response variable during the learning period.
 The probability of obtaining this effect by chance is p = 50%.
 This means the effect may be spurious and would generally not be
 considered statistically significant.
+
+
+For more details, including the model assumptions behind the method, see
+https://google.github.io/CausalImpact/.
