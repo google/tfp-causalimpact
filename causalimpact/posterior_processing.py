@@ -15,7 +15,7 @@
 
 """Library for working with (results from) the posterior."""
 
-from typing import List, Text, Tuple
+from typing import List, Text, Tuple, Union
 
 from causalimpact import data as cid
 import numpy as np
@@ -26,7 +26,7 @@ def calculate_trajectory_quantiles(
     trajectories: pd.DataFrame,
     column_prefix: Text = "predicted",
     quantiles: Tuple[float, float] = (0.025, 0.975)
-) -> pd.DataFrame | pd.Series:
+) -> Union[pd.DataFrame, pd.Series]:
   """Calculates timepoint-wise quantiles of trajectories.
 
   This function is used to calculate timepoint-wise quantiles for both the
