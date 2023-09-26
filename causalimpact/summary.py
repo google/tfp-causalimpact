@@ -15,6 +15,7 @@
 
 """Utils for printing impact summaries."""
 
+from typing import Optional
 from jinja2 import Template
 
 summary_text = """
@@ -129,7 +130,9 @@ SUMMARY_TMPL = Template(summary_text)
 REPORT_TMPL = Template(report_text)
 
 
-def summary(ci_model, output_format: str = "summary", alpha: float = 0.05):
+def summary(
+    ci_model, output_format: str = "summary", alpha: Optional[float] = None
+):
   """Get summary of impact results.
 
   Args:
@@ -138,9 +141,19 @@ def summary(ci_model, output_format: str = "summary", alpha: float = 0.05):
       ('summary') or a long-form description ('report').
     alpha: float for alpha level to use; must be in (0, 1).
 
+  Raises:
+    DeprecationWarning: In case `alpha` is explicitly set.
+
   Returns:
     Text output of summary results.
   """
+  inferred_alpha = ci_model.summary.alpha.mean()
+  if alpha is not None and alpha != inferred_alpha:
+    raise DeprecationWarning("Supplying an argument to `alpha` is deprecated, "
+                             "since it is inferred from `ci_model`. Set "
+                             f"`alpha=None` to use alpha={inferred_alpha:.2f}, "
+                             f"or retrain the model with alpha={alpha}.")
+  alpha = inferred_alpha
 
   if output_format not in ["summary", "report"]:
     raise ValueError("`format` must be either 'summary' or 'report'. "

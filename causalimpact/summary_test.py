@@ -45,6 +45,8 @@ def summary_data():
       [0.143, 0.133],
       [0.343, 0.333],
       [0.001, 0.100],
+      [0.001, 0.001],
+      [0.100, 0.100]
   ]
 
   # Transpose data to get in right shape.
@@ -54,7 +56,7 @@ def summary_data():
           "actual", "predicted", "predicted_lower", "predicted_upper",
           "predicted_sd", "abs_effect", "abs_effect_lower", "abs_effect_upper",
           "abs_effect_sd", "rel_effect", "rel_effect_lower", "rel_effect_upper",
-          "rel_effect_sd"
+          "rel_effect_sd", "p_value", "alpha"
       ],
       index=["average", "cumulative"])
   return ci.CausalImpactAnalysis(
