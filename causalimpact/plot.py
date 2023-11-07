@@ -15,31 +15,175 @@
 
 """Plotting causalimpact results."""
 
+from typing import Any, Union
+
 import altair as alt
 import numpy as np
 import pandas as pd
 import tensorflow_probability as tfp
 
 
-def plot(ci_model, **kwargs) -> alt.Chart:
+def _draw_matplotlib_plot(plot_df, **plot_params):
+  """Make actual matplotlib plot."""
+  try:
+    import matplotlib.pyplot as mplt  # pylint: disable=g-import-not-at-top
+  except ImportError as e:
+    raise ImportError(
+        "matplotlib is required for using it as plotting backend. Please"
+        " install it first."
+    ) from e
+
+  def _helper_vertical_lines(plot_df, ax):
+    # Vertical line at pre-period end and post-period end
+    pre_period_start = plot_df["pre_period_start"][0]
+    pre_period_end = plot_df["pre_period_end"][0]
+    post_period_start = plot_df["post_period_start"][0]
+    post_period_end = plot_df["post_period_end"][0]
+    # Only draw a line at the start of the pre-period if there are points before
+    # it.
+    if any(plot_df["time"] < pre_period_start):
+      ax.axvline(pre_period_start, color="grey", linestyle="--")
+    # Only draw a line at the end of the pre-period if there are points between
+    # it and the start of the post-period.
+    if any(
+        (plot_df["time"] > pre_period_end)
+        & (plot_df["time"] < post_period_start)
+    ):
+      ax.axvline(pre_period_end, color="grey", linestyle="--")
+
+    # Always draw when the post-period starts.
+    ax.axvline(post_period_start, color="grey", linestyle="--")
+
+    # Only draw line at the end of the post-period if there are points after it.
+    if any(plot_df["time"] > post_period_end):
+      ax.axvline(post_period_end, color="grey", linestyle="--")
+    return ax
+
+  # Each chart has size plot_params["chart_width"] x plot_params["chart_height"]
+  # in px hence we need atleast 3 times the height to fit all the charts
+  # Setup base plot
+  fig, axes = mplt.subplots(
+      3,
+      1,
+      figsize=(
+          plot_params["chart_width"] / 100,
+          3 * plot_params["chart_height"] / 100,
+      ),
+      sharex=True,
+  )
+  fig.tight_layout(pad=3.0)
+  axes[0].grid()
+  axes[1].grid()
+  axes[2].grid()
+  axes[0] = _helper_vertical_lines(plot_df, axes[0])
+  axes[2] = _helper_vertical_lines(plot_df, axes[2])
+  axes[1] = _helper_vertical_lines(plot_df, axes[1])
+  axes[0].set_ylabel(
+      "Original",
+      rotation=90,
+      fontsize=plot_params["axis_title_font_size"],
+      fontweight="bold",
+  )
+  axes[1].set_ylabel(
+      "Pointwise",
+      rotation=90,
+      fontsize=plot_params["axis_title_font_size"],
+      fontweight="bold",
+  )
+  axes[2].set_ylabel(
+      "Cumulative",
+      rotation=90,
+      fontsize=plot_params["axis_title_font_size"],
+      fontweight="bold",
+  )
+  axes[2].set_xlabel(
+      "Time", fontsize=plot_params["axis_title_font_size"], fontweight="bold"
+  )
+
+  # Plot the original data with the pre-period and post-period marked
+  # And prediction and confidence intervals
+  original_series = plot_df.loc[
+      (plot_df["scale"] == "original") & (plot_df["stat"] == "observed")
+  ]
+  predicted_series = plot_df.loc[
+      (plot_df["scale"] == "original") & (plot_df["stat"] == "mean")
+  ]
+  axes[0].plot(
+      predicted_series["time"], predicted_series["value"], label="Mean"
+  )
+  axes[0].plot(
+      original_series["time"], original_series["value"], label="Observed"
+  )
+  axes[0].fill_between(
+      original_series["time"],
+      original_series["lower"],
+      original_series["upper"],
+      alpha=0.2,
+  )
+  axes[0].legend(loc="upper left")
+
+  # Plot the pointwise effect with the pre-period and post-period marked
+  # And prediction and confidence intervals
+  pointwise_series = plot_df.loc[
+      (plot_df["scale"] == "point_effects") & (plot_df["stat"] == "mean")
+  ]
+  axes[1].plot(
+      pointwise_series["time"], pointwise_series["value"], label="Pointwise"
+  )
+  axes[1].fill_between(
+      pointwise_series["time"],
+      pointwise_series["lower"],
+      pointwise_series["upper"],
+      alpha=0.2,
+  )
+  # Add horizontal dotted line at y=0
+  axes[1].axhline(0, color="grey", linestyle="-")
+  axes[1].legend(loc="upper left")
+
+  # Plot the cumulative effect with the pre-period and post-period marked
+  # And prediction and confidence intervals
+  cumulative_series = plot_df.loc[
+      (plot_df["scale"] == "cumulative_effects") & (plot_df["stat"] == "mean")
+  ]
+  axes[2].plot(
+      cumulative_series["time"], cumulative_series["value"], label="Cumulative"
+  )
+  axes[2].fill_between(
+      cumulative_series["time"],
+      cumulative_series["lower"],
+      cumulative_series["upper"],
+      alpha=0.2,
+  )
+  # Add horizontal dotted line at y=0
+  axes[2].axhline(0, color="grey", linestyle="-")
+  axes[2].legend(loc="upper left")
+
+  return fig
+
+
+def plot(ci_model, **kwargs) -> Union[alt.Chart, Any]:
   """Main plotting function.
 
   Args:
     ci_model: CausalImpactAnalysis object, after having called
       `fit_causalimpact`.
-    **kwargs: arguments for modifying plot defaults. static_plot - whether to
-      return the standard CausalImpact plot as a static plot (default) or an
-      interactive plot. alpha - float for determining confidence level for
-      uncertainty intervals when quantile_based_intervals=False. show_median -
-      whether to draw posterior median predictions in addition to the posterior
-      mean. Only applies if "median" was a specified aggregation given in
-      evaluate(). use_std_intervals - whether to draw uncertainty intervals
-      based on quantiles (default) or use a normal approximation based on the
-      standard deviation. chart_width - integer for chart width in pixels.
-      chart_height - integer for chart height in pixels. axis_title_font_size -
-      integer for axis title font size. Default = 18. axis_label_font_size -
-      integer for axis title font size. Default = 16. strip_title_font_size -
-      integer for facet label font size. Default = 18.
+    **kwargs: arguments for modifying plot defaults:
+      static_plot - whether to return the standard CausalImpact plot as a
+        static plot (default) or an interactive plot.
+      backend - literal["altair","matplotlib"] to use for generating the figure
+      alpha - float for determining confidence level for uncertainty intervals
+        when quantile_based_intervals=False.
+      show_median - whether to draw posterior median predictions in addition to
+        the posterior mean. Only applies if "median" was a specified aggregation
+        given in evaluate().
+      use_std_intervals - whether to draw uncertainty intervals based on
+        quantiles (default) or use a normal approximation based on the standard
+        deviation.
+      chart_width - integer for chart width in pixels.
+      chart_height - integer for chart height in pixels.
+      axis_title_font_size - integer for axis title font size. Default = 18.
+      axis_label_font_size - integer for axis title font size. Default = 16.
+      strip_title_font_size - integer for facet label font size. Default = 18.
 
   Returns:
     alt.Chart plot object
@@ -48,6 +192,7 @@ def plot(ci_model, **kwargs) -> alt.Chart:
   # Process kwargs.
   plot_params = {
       "static_plot": True,
+      "backend": "altair",
       "alpha": 0.05,
       "show_median": False,
       "use_std_intervals": False,
@@ -77,15 +222,23 @@ def plot(ci_model, **kwargs) -> alt.Chart:
   if plot_params["show_median"]:
     plot_df = plot_df.loc[plot_df["stat"] != "median"]
     plot_df["stat_pretty"] = pd.Categorical(
-        plot_df["stat_pretty"], categories=["Observed", "Mean"], ordered=True)
+        plot_df["stat_pretty"], categories=["Observed", "Mean"], ordered=True
+    )
 
   # Create the requested plot type.
-  if plot_params["static_plot"]:
-    plot_df = plot_df.loc[(plot_df["stat"] != "median")]
-    plt = _draw_classic_plot(plot_df, **plot_params)
+  if plot_params["backend"] == "altair":
+    if plot_params["static_plot"]:
+      plot_df = plot_df.loc[(plot_df["stat"] != "median")]
+      plt = _draw_classic_plot(plot_df, **plot_params)
+    else:
+      plt = _draw_interactive_plot(plot_df, **plot_params)
+  elif plot_params["backend"] == "matplotlib":
+    plt = _draw_matplotlib_plot(plot_df, **plot_params)
   else:
-    plt = _draw_interactive_plot(plot_df, **plot_params)
-
+    raise ValueError(
+        "backend must be one of 'altair' or 'matplotlib'. Got"
+        f" {plot_params['backend']}."
+    )
   return plt
 
 

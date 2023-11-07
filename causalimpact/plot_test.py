@@ -816,6 +816,12 @@ class PlotTest(parameterized.TestCase):
     # method is given.
     self.assertEqual(bands_df["band_method"].unique(), method)
 
+  def testPlotMatplotlib(self):
+    # Create plot object and use to_dict() to convert the plot components into
+    # a more easily queried dict.
+    fig = ci.plot(self.ci_data_1, backend="matplotlib")
+    self.assertIsNotNone(fig)
+
   def testClassicPlot_one_vline(self):
     # Create plot object and use to_dict() to convert the plot components into
     # a more easily queried dict.

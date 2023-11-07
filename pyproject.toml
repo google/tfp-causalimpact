@@ -34,6 +34,7 @@ repository = "https://github.com/google/tfp-causalimpact"
 dev = [
     "absl-py",
     "altair~=4.2",
+    "matplotlib",
     "pylint>=2.6.0",
     "pyink",
     "pytest",
