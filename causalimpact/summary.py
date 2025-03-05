@@ -162,7 +162,7 @@ def summary(
   if alpha <= 0. or alpha >= 1.:
     raise ValueError("`alpha` must be in (0, 1). Got %s" % alpha)
 
-  p_value = ci_model.summary["p_value"][0]
+  p_value = ci_model.summary.p_value.iloc[0]
 
   if output_format == "summary":
     output = SUMMARY_TMPL.render(
