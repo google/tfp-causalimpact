@@ -25,682 +25,782 @@ import pandas as pd
 
 
 expected_classic_dict_four_vlines = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "type": "nominal",
-                    "field": "stat_pretty",
-                    "legend": {
-                        "labelFontSize": 16,
-                        "symbolSize": 160,
-                        "title": ""
-                    }
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "pre_period_start"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "pre_period_end"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_start"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_end"
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "field": "stat_pretty",
+            "legend": {
+              "labelFontSize": 16,
+              "symbolSize": 160,
+              "title": ""
+            },
+            "type": "nominal"
+          },
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "pre_period_start",
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "pre_period_end",
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_end",
+            "type": "temporal"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_classic_dict_two_vlines = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "type": "nominal",
-                    "field": "stat_pretty",
-                    "legend": {
-                        "labelFontSize": 16,
-                        "symbolSize": 160,
-                        "title": ""
-                    }
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "pre_period_end"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_start"
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "field": "stat_pretty",
+            "legend": {
+              "labelFontSize": 16,
+              "symbolSize": 160,
+              "title": ""
+            },
+            "type": "nominal"
+          },
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "pre_period_end",
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "type": "temporal"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_classic_dict_one_vline = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "type": "nominal",
-                    "field": "stat_pretty",
-                    "legend": {
-                        "labelFontSize": 16,
-                        "symbolSize": 160,
-                        "title": ""
-                    }
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_start"
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "field": "stat_pretty",
+            "legend": {
+              "labelFontSize": 16,
+              "symbolSize": 160,
+              "title": ""
+            },
+            "type": "nominal"
+          },
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "type": "temporal"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_classic_dict_one_vline_integer_index = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "type": "nominal",
-                    "field": "stat_pretty",
-                    "legend": {
-                        "labelFontSize": 16,
-                        "symbolSize": 160,
-                        "title": ""
-                    }
-                },
-                "x": {
-                    "type": "quantitative",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "quantitative",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "quantitative",
-                    "field": "post_period_start"
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "field": "stat_pretty",
+            "legend": {
+              "labelFontSize": 16,
+              "symbolSize": 160,
+              "title": ""
+            },
+            "type": "nominal"
+          },
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "quantitative"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "type": "quantitative"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_top_dict = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "type": "nominal",
-                    "field": "stat_pretty",
-                    "legend": {
-                        "labelFontSize": 16,
-                        "symbolSize": 160,
-                        "title": ""
-                    }
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "selection": {
-                "selector001": {
-                    "type": "interval",
-                    "encodings": ["x"]
-                }
-            },
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "pre_period_end"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_start"
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "field": "stat_pretty",
+            "legend": {
+              "labelFontSize": 16,
+              "symbolSize": 160,
+              "title": ""
+            },
+            "type": "nominal"
+          },
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        },
+        "name": "view_1"
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "pre_period_end",
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "type": "temporal"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_bot_dict = {
-    "facet": {
-        "row": {
-            "type": "nominal",
-            "field": "scale_pretty",
-            "sort": ["Original", "Pointwise", "Cumulative"],
-            "title": ""
-        }
-    },
-    "spec": {
-        "layer": [{
-            "mark": "line",
-            "encoding": {
-                "color": {
-                    "condition": {
-                        "type": "nominal",
-                        "field": "stat_pretty",
-                        "legend": None,
-                        "selection": "selector002"
-                    },
-                    "value": "lightgray"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "scale": {
-                        "domain": {
-                            "selection": "selector001"
-                        }
-                    },
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "value",
-                    "scale": {
-                        "zero": False
-                    },
-                    "title": ""
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": {
-                "type": "area",
-                "opacity": 0.3
-            },
-            "encoding": {
-                "x": {
-                    "type": "temporal",
-                    "field": "time",
-                    "scale": {
-                        "domain": {
-                            "selection": "selector001"
-                        }
-                    },
-                    "title": "Time"
-                },
-                "y": {
-                    "type": "quantitative",
-                    "field": "upper"
-                },
-                "y2": {
-                    "field": "lower"
-                }
-            },
-            "height": 200,
-            "width": 600
-        }, {
-            "mark": "rule",
-            "encoding": {
-                "y": {
-                    "type": "quantitative",
-                    "field": "zero"
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "pre_period_end",
-                    "scale": {
-                        "domain": {
-                            "selection": "selector001"
-                        }
-                    }
-                }
-            }
-        }, {
-            "mark": {
-                "type": "rule",
-                "strokeDash": [5, 5]
-            },
-            "encoding": {
-                "color": {
-                    "value": "grey"
-                },
-                "x": {
-                    "type": "temporal",
-                    "field": "post_period_start",
-                    "scale": {
-                        "domain": {
-                            "selection": "selector001"
-                        }
-                    }
-                }
-            }
-        }]
-    },
-    "resolve": {
-        "scale": {
-            "y": "independent"
-        }
+  "facet": {
+    "row": {
+      "field": "scale_pretty",
+      "sort": [
+        "Original",
+        "Pointwise",
+        "Cumulative"
+      ],
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "spec": {
+    "layer": [
+      {
+        "mark": {
+          "type": "line"
+        },
+        "encoding": {
+          "color": {
+            "condition": {
+              "param": "param_2",
+              "field": "stat_pretty",
+              "legend": None,
+              "type": "nominal"
+            },
+            "value": "lightgray"
+          },
+          "x": {
+            "field": "time",
+            "scale": {
+              "domain": {
+                "param": "param_1"
+              }
+            },
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "value",
+            "scale": {
+              "zero": False
+            },
+            "title": "",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "area",
+          "opacity": 0.3
+        },
+        "encoding": {
+          "x": {
+            "field": "time",
+            "scale": {
+              "domain": {
+                "param": "param_1"
+              }
+            },
+            "title": "Time",
+            "type": "temporal"
+          },
+          "y": {
+            "field": "upper",
+            "type": "quantitative"
+          },
+          "y2": {
+            "field": "lower"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule"
+        },
+        "encoding": {
+          "y": {
+            "field": "zero",
+            "type": "quantitative"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "pre_period_end",
+            "scale": {
+              "domain": {
+                "param": "param_1"
+              }
+            },
+            "type": "temporal"
+          }
+        }
+      },
+      {
+        "mark": {
+          "type": "rule",
+          "strokeDash": [
+            5,
+            5
+          ]
+        },
+        "encoding": {
+          "color": {
+            "value": "grey"
+          },
+          "x": {
+            "field": "post_period_start",
+            "scale": {
+              "domain": {
+                "param": "param_1"
+              }
+            },
+            "type": "temporal"
+          }
+        }
+      }
+    ],
+    "height": 200,
+    "width": 600
+  },
+  "resolve": {
+    "scale": {
+      "y": "independent"
+    }
+  }
 }
 
 expected_legend_dict = {
-    "mark": "point",
-    "encoding": {
-        "color": {
-            "condition": {
-                "type": "nominal",
-                "field": "stat_pretty",
-                "legend": None,
-                "selection": "selector002"
-            },
-            "value": "lightgray"
-        },
-        "y": {
-            "type": "nominal",
-            "axis": {
-                "orient": "right"
-            },
-            "field": "stat_pretty",
-            "title": ""
-        }
+  "mark": {
+    "type": "point"
+  },
+  "encoding": {
+    "color": {
+      "condition": {
+        "param": "param_2",
+        "field": "stat_pretty",
+        "legend": None,
+        "type": "nominal"
+      },
+      "value": "lightgray"
     },
-    "selection": {
-        "selector002": {
-            "type": "multi",
-            "fields": ["stat_pretty"]
-        }
+    "y": {
+      "axis": {
+        "orient": "right"
+      },
+      "field": "stat_pretty",
+      "title": "",
+      "type": "nominal"
     }
+  },
+  "name": "view_2"
 }
 
 

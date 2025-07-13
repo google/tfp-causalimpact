@@ -2,7 +2,7 @@
 name = "tfp-causalimpact"
 description = "Inferring causal effects using Bayesian Structural Time-Series models"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9, <3.13"
 license = {file = "LICENSE"}
 authors = [{name = "TFP CausalImpact Authors", email="no-reply@google.com"}]
 classifiers = [
@@ -15,11 +15,11 @@ keywords = []
 
 dependencies = [
     "Jinja2",
-    "altair",
-    "numpy",
-    "pandas",
-    "tensorflow",
-    "tensorflow-probability"
+    "altair>=5.0,<6.0",
+    "numpy>=1.22,<2.0",
+    "pandas>=2.0.0,<2.4",
+    "tensorflow>=2.16.1,<2.20",
+    "tensorflow-probability>=0.24.0,<0.26"
 ]
 
 dynamic = ["version"]
