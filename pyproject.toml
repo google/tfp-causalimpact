@@ -33,7 +33,7 @@ repository = "https://github.com/google/tfp-causalimpact"
 # Installed through `pip install .[dev]`
 dev = [
     "absl-py",
-    "altair~=4.2",
+    "altair~=5.5",
     "matplotlib",
     "pylint>=2.6.0",
     "pyink",

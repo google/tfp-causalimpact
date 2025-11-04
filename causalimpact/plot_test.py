@@ -34,8 +34,10 @@ expected_classic_dict_four_vlines = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "type": "nominal",
@@ -60,8 +62,6 @@ expected_classic_dict_four_vlines = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
             "mark": {
                 "type": "area",
@@ -81,10 +81,8 @@ expected_classic_dict_four_vlines = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -166,8 +164,10 @@ expected_classic_dict_two_vlines = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "type": "nominal",
@@ -192,8 +192,7 @@ expected_classic_dict_two_vlines = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
+
         }, {
             "mark": {
                 "type": "area",
@@ -213,10 +212,8 @@ expected_classic_dict_two_vlines = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -270,8 +267,10 @@ expected_classic_dict_one_vline = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "type": "nominal",
@@ -296,8 +295,6 @@ expected_classic_dict_one_vline = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
             "mark": {
                 "type": "area",
@@ -317,10 +314,8 @@ expected_classic_dict_one_vline = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -360,8 +355,10 @@ expected_classic_dict_one_vline_integer_index = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "type": "nominal",
@@ -386,8 +383,6 @@ expected_classic_dict_one_vline_integer_index = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
             "mark": {
                 "type": "area",
@@ -407,10 +402,8 @@ expected_classic_dict_one_vline_integer_index = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -450,8 +443,10 @@ expected_top_dict = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "type": "nominal",
@@ -476,8 +471,6 @@ expected_top_dict = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
             "mark": {
                 "type": "area",
@@ -497,16 +490,9 @@ expected_top_dict = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "selection": {
-                "selector001": {
-                    "type": "interval",
-                    "encodings": ["x"]
-                }
-            },
-            "width": 600
+            "name": "view_1"
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -560,15 +546,17 @@ expected_bot_dict = {
         }
     },
     "spec": {
+        "height": 200,
+        "width": 600,
         "layer": [{
-            "mark": "line",
+            "mark": {"type": "line"},
             "encoding": {
                 "color": {
                     "condition": {
                         "type": "nominal",
                         "field": "stat_pretty",
                         "legend": None,
-                        "selection": "selector002"
+                        "param": "param_2"
                     },
                     "value": "lightgray"
                 },
@@ -577,7 +565,7 @@ expected_bot_dict = {
                     "field": "time",
                     "scale": {
                         "domain": {
-                            "selection": "selector001"
+                            "param": "param_1"
                         }
                     },
                     "title": "Time"
@@ -591,8 +579,7 @@ expected_bot_dict = {
                     "title": ""
                 }
             },
-            "height": 200,
-            "width": 600
+
         }, {
             "mark": {
                 "type": "area",
@@ -604,7 +591,7 @@ expected_bot_dict = {
                     "field": "time",
                     "scale": {
                         "domain": {
-                            "selection": "selector001"
+                            "param": "param_1"
                         }
                     },
                     "title": "Time"
@@ -617,10 +604,8 @@ expected_bot_dict = {
                     "field": "lower"
                 }
             },
-            "height": 200,
-            "width": 600
         }, {
-            "mark": "rule",
+            "mark": {"type": "rule"},
             "encoding": {
                 "y": {
                     "type": "quantitative",
@@ -641,7 +626,7 @@ expected_bot_dict = {
                     "field": "pre_period_end",
                     "scale": {
                         "domain": {
-                            "selection": "selector001"
+                            "param": "param_1"
                         }
                     }
                 }
@@ -660,7 +645,7 @@ expected_bot_dict = {
                     "field": "post_period_start",
                     "scale": {
                         "domain": {
-                            "selection": "selector001"
+                            "param": "param_1"
                         }
                     }
                 }
@@ -675,14 +660,14 @@ expected_bot_dict = {
 }
 
 expected_legend_dict = {
-    "mark": "point",
+    "mark": {"type": "point"},
     "encoding": {
         "color": {
             "condition": {
                 "type": "nominal",
                 "field": "stat_pretty",
                 "legend": None,
-                "selection": "selector002"
+                "param": "param_2"
             },
             "value": "lightgray"
         },
@@ -695,12 +680,7 @@ expected_legend_dict = {
             "title": ""
         }
     },
-    "selection": {
-        "selector002": {
-            "type": "multi",
-            "fields": ["stat_pretty"]
-        }
-    }
+    "name": "view_2"
 }
 
 

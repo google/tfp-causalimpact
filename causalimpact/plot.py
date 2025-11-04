@@ -576,10 +576,10 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
   # ############################################################################
 
   # Brush for selecting a location to zoom into on x-axis.
-  brush = alt.selection(type="interval", encodings=["x"])
+  brush = alt.selection_interval(encodings=["x"])
 
   # Mini-chart as interactive legend to choose which stat to display.
-  stat_selection = alt.selection_multi(fields=["stat_pretty"])
+  stat_selection = alt.selection_point(fields=["stat_pretty"])
   selection_color = alt.condition(stat_selection,
                                   alt.Color("stat_pretty:N", legend=None),
                                   alt.value("lightgray"))
@@ -605,7 +605,7 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
           symbolSize=10 * kwargs["axis_label_font_size"]))
   static_layers["lines"] = static_layers["lines"].encode(
       color=static_color_spec)
-  static_layers["band"] = static_layers["band"].add_selection(brush)
+  static_layers["band"] = static_layers["band"].add_params(brush)
 
   # Combine layers of static top chart. Add the brush selection to the band
   # layer to enable selecting a date range on the x-axis for the bottom plots to
