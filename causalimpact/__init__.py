@@ -19,12 +19,6 @@ __version__ = "0.2.0"
 
 import os
 
-# TF 2.12 currently generates a huge number of useless log.info messages
-# directly from C++, which cannot be filtered using standard Python logging
-# tools -- see https://github.com/tensorflow/tensorflow/issues/59779 .
-# To improve the TFP CausalImpact user experience, we suppress these messages.
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
-
 # pylint: disable=g-import-not-at-top
 from causalimpact.causalimpact_lib import CausalImpactAnalysis
 from causalimpact.causalimpact_lib import DataOptions
