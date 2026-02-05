@@ -18,9 +18,9 @@ from typing import Optional, Text, Tuple, Union
 
 from causalimpact import indices
 from causalimpact import standardize
+import jax.numpy as jnp
 import pandas as pd
-import tensorflow as tf
-import tensorflow_probability as tfp
+import tensorflow_probability.substrates.jax as tfp
 
 
 class CausalImpactData:
@@ -80,7 +80,7 @@ class CausalImpactData:
                post_period: Tuple[indices.InputDateType, indices.InputDateType],
                outcome_column: Optional[Text] = None,
                standardize_data=True,
-               dtype=tf.float32):
+               dtype=jnp.float32):
     """Constructs a `CausalImpactData` instance.
 
     Args:
@@ -122,10 +122,10 @@ class CausalImpactData:
       self.model_pre_data = self.pre_data
       self.model_after_pre_data = self.after_pre_data
 
-    out_ts = tf.convert_to_tensor(
+    out_ts = jnp.array(
         self.model_pre_data[self.outcome_column], dtype=dtype)
     self.outcome_ts = tfp.sts.MaskedTimeSeries(
-        time_series=out_ts, is_missing=tf.math.is_nan(out_ts))
+        time_series=out_ts, is_missing=jnp.isnan(out_ts))
     if self.feature_columns is not None:
       # Here we have to use the FULL time series so that the post-period
       # feature data can be used for forecasting.

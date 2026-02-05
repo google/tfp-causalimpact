@@ -18,8 +18,8 @@ dependencies = [
     "altair",
     "numpy",
     "pandas",
-    "tensorflow",
-    "tensorflow-probability"
+    "jax",
+    "tensorflow-probability[jax]"
 ]
 
 dynamic = ["version"]
