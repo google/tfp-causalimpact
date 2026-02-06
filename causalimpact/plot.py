@@ -20,7 +20,7 @@ from typing import Any, Union
 import altair as alt
 import numpy as np
 import pandas as pd
-import tensorflow_probability as tfp
+import tensorflow_probability.substrates.jax as tfp
 
 
 def _draw_matplotlib_plot(plot_df, **plot_params):
@@ -167,23 +167,20 @@ def plot(ci_model, **kwargs) -> Union[alt.Chart, Any]:
   Args:
     ci_model: CausalImpactAnalysis object, after having called
       `fit_causalimpact`.
-    **kwargs: arguments for modifying plot defaults:
-      static_plot - whether to return the standard CausalImpact plot as a
-        static plot (default) or an interactive plot.
-      backend - literal["altair","matplotlib"] to use for generating the figure
-      alpha - float for determining confidence level for uncertainty intervals
-        when quantile_based_intervals=False.
-      show_median - whether to draw posterior median predictions in addition to
-        the posterior mean. Only applies if "median" was a specified aggregation
-        given in evaluate().
-      use_std_intervals - whether to draw uncertainty intervals based on
-        quantiles (default) or use a normal approximation based on the standard
-        deviation.
-      chart_width - integer for chart width in pixels.
-      chart_height - integer for chart height in pixels.
-      axis_title_font_size - integer for axis title font size. Default = 18.
-      axis_label_font_size - integer for axis title font size. Default = 16.
-      strip_title_font_size - integer for facet label font size. Default = 18.
+    **kwargs: arguments for modifying plot defaults: static_plot - whether to
+      return the standard CausalImpact plot as a static plot (default) or an
+      interactive plot. backend - literal["altair","matplotlib"] to use for
+      generating the figure alpha - float for determining confidence level for
+      uncertainty intervals when quantile_based_intervals=False. show_median -
+      whether to draw posterior median predictions in addition to the posterior
+      mean. Only applies if "median" was a specified aggregation given in
+      evaluate(). use_std_intervals - whether to draw uncertainty intervals
+      based on quantiles (default) or use a normal approximation based on the
+      standard deviation. chart_width - integer for chart width in pixels.
+      chart_height - integer for chart height in pixels. axis_title_font_size -
+      integer for axis title font size. Default = 18. axis_label_font_size -
+      integer for axis title font size. Default = 16. strip_title_font_size -
+      integer for facet label font size. Default = 18.
 
   Returns:
     alt.Chart plot object
@@ -200,7 +197,7 @@ def plot(ci_model, **kwargs) -> Union[alt.Chart, Any]:
       "chart_height": 200,
       "axis_title_font_size": 18,
       "axis_label_font_size": 16,
-      "strip_title_font_size": 20
+      "strip_title_font_size": 20,
   }
   if kwargs:
     for k, v in plot_params.items():
@@ -292,10 +289,15 @@ def _create_plot_df(series: pd.DataFrame, alpha: float = 0.05) -> pd.DataFrame:
   plot_df = lines_df.merge(
       bands_df,
       on=[
-          "time", "scale", "pre_period_start", "pre_period_end",
-          "post_period_start", "post_period_end"
+          "time",
+          "scale",
+          "pre_period_start",
+          "pre_period_end",
+          "post_period_start",
+          "post_period_end",
       ],
-      how="left")
+      how="left",
+  )
 
   # Add a zero column so we can plot a zero line for the absolute and
   # cumulative scales, but set it to np.nan for the original scale so it
@@ -304,27 +306,28 @@ def _create_plot_df(series: pd.DataFrame, alpha: float = 0.05) -> pd.DataFrame:
   plot_df.loc[plot_df["scale"] == "original", "zero"] = np.nan
 
   # Make nicer versions of the scale and stat variables for use as plot labels.
+  scale_lookup = {"original": "Original", "point_effects": "Pointwise"}
   plot_df["scale_pretty"] = [
-      "Original" if m == "original" else
-      "Pointwise" if m == "point_effects" else "Cumulative"
-      for m in plot_df["scale"]
+      scale_lookup.get(m, "Cumulative") for m in plot_df["scale"]
   ]
   plot_df["scale_pretty"] = pd.Categorical(
       plot_df["scale_pretty"],
       categories=["Original", "Pointwise", "Cumulative"],
-      ordered=True)
+      ordered=True,
+  )
   plot_df["stat_pretty"] = plot_df["stat"].str.capitalize()
   plot_df["stat_pretty"] = pd.Categorical(
       plot_df["stat_pretty"],
       categories=["Observed", "Mean", "Median"],
-      ordered=True)
+      ordered=True,
+  )
 
   return plot_df
 
 
-def _create_plot_component_df(series: pd.DataFrame,
-                              component: str,
-                              alpha: float = 0.05) -> pd.DataFrame:
+def _create_plot_component_df(
+    series: pd.DataFrame, component: str, alpha: float = 0.05
+) -> pd.DataFrame:
   """Creates plot component dataframes.
 
   This function takes the impact estimate time series and creates a long-form
@@ -356,13 +359,18 @@ def _create_plot_component_df(series: pd.DataFrame,
   """
 
   if all([x not in component for x in ["lines", "bands", "std"]]):
-    raise ValueError("`component` must be one of 'lines', 'bands', or 'std'."
-                     "Got %s." % component)
+    raise ValueError(
+        "`component` must be one of 'lines', 'bands', or 'std'.Got %s."
+        % component
+    )
 
   # Pull out only the columns we need from `series`.
   col_stubs = [
-      "time", "pre_period_start", "pre_period_end", "post_period_start",
-      "post_period_end"
+      "time",
+      "pre_period_start",
+      "pre_period_end",
+      "post_period_start",
+      "post_period_end",
   ]
   if component == "lines":
     col_stubs.extend(["mean", "median", "observed"])
@@ -379,24 +387,31 @@ def _create_plot_component_df(series: pd.DataFrame,
   # that we then split into two columns, `scale` and `stat`.
   sub_df = series[cols_to_extract].melt(
       id_vars=[
-          "time", "pre_period_start", "pre_period_end", "post_period_start",
-          "post_period_end"
+          "time",
+          "pre_period_start",
+          "pre_period_end",
+          "post_period_start",
+          "post_period_end",
       ],
       var_name="scale_stat",
-      value_name="value")
+      value_name="value",
+  )
 
   # `scale` is for whether `value` is on the original scale (scale of the
   # observed data), the pointwise scale, or the cumulative scale.
   stats_to_drop = "_upper|_lower|_mean|_median|_std"
   sub_df["scale"] = sub_df["scale_stat"].str.replace(
-      stats_to_drop, "", regex=True)
-  sub_df.loc[sub_df["scale"].str.contains("observed|posterior"),
-             "scale"] = "original"
+      stats_to_drop, "", regex=True
+  )
+  sub_df.loc[sub_df["scale"].str.contains("observed|posterior"), "scale"] = (
+      "original"
+  )
 
   # `stat` is for whether `value` represents the observed data or the mean or
   # median estimates.
   sub_df["stat"] = sub_df["scale_stat"].str.replace(
-      "posterior_|point_effects_|cumulative_effects_", "", regex=True)
+      "posterior_|point_effects_|cumulative_effects_", "", regex=True
+  )
   sub_df.drop(columns=["scale_stat"], inplace=True)
 
   # For bands and std, reshape the data again so that "upper" and "lower" (for
@@ -405,11 +420,16 @@ def _create_plot_component_df(series: pd.DataFrame,
   if (component == "bands") | (component == "std"):
     sub_df = sub_df.pivot_table(
         index=[
-            "time", "scale", "pre_period_start", "pre_period_end",
-            "post_period_start", "post_period_end"
+            "time",
+            "scale",
+            "pre_period_start",
+            "pre_period_end",
+            "post_period_start",
+            "post_period_end",
         ],
         columns="stat",
-        values="value").reset_index()
+        values="value",
+    ).reset_index()
     if component == "bands":
       sub_df["band_method"] = "quantile"
     else:
@@ -417,8 +437,9 @@ def _create_plot_component_df(series: pd.DataFrame,
 
   # For std, use the posterior mean and std to create lower and upper bounds.
   if component == "std":
-    z_val = tfp.distributions.Normal(
-        loc=0., scale=1.).quantile(1.0 - alpha / 2.0).numpy()
+    z_val = np.array(
+        tfp.distributions.Normal(loc=0.0, scale=1.0).quantile(1.0 - alpha / 2.0)
+    )
     sub_df["lower"] = sub_df["mean"] - z_val * sub_df["std"]
     sub_df["upper"] = sub_df["mean"] + z_val * sub_df["std"]
     sub_df.drop(columns={"mean", "std"}, inplace=True)
@@ -453,15 +474,23 @@ def _create_base_layers(plot_df: pd.DataFrame, **kwargs):
   """
 
   # Base line layer.
-  base_lines = alt.Chart(plot_df).mark_line().encode(
-      x=alt.X("time", title="Time"),
-      y=alt.Y("value:Q", scale=alt.Scale(zero=False), title="")).properties(
-          width=kwargs["chart_width"], height=kwargs["chart_height"])
+  base_lines = (
+      alt.Chart(plot_df)
+      .mark_line()
+      .encode(
+          x=alt.X("time", title="Time"),
+          y=alt.Y("value:Q", scale=alt.Scale(zero=False), title=""),
+      )
+      .properties(width=kwargs["chart_width"], height=kwargs["chart_height"])
+  )
 
   # Base band layer.
-  base_band = alt.Chart(plot_df).mark_area(opacity=0.3).encode(
-      x=alt.X("time", title="Time"), y="upper:Q", y2="lower:Q").properties(
-          width=kwargs["chart_width"], height=kwargs["chart_height"])
+  base_band = (
+      alt.Chart(plot_df)
+      .mark_area(opacity=0.3)
+      .encode(x=alt.X("time", title="Time"), y="upper:Q", y2="lower:Q")
+      .properties(width=kwargs["chart_width"], height=kwargs["chart_height"])
+  )
 
   # Add horizontal line at zero.
   base_hline = alt.Chart(plot_df).mark_rule().encode(y="zero")
@@ -479,34 +508,43 @@ def _create_base_layers(plot_df: pd.DataFrame, **kwargs):
   # Only draw a line at the start of the pre-period if there are points before
   # it.
   if any(plot_df["time"] < pre_period_start):
-    base_vlines["pre_period_start"] = alt.Chart(plot_df).mark_rule(
-        strokeDash=[5, 5]).encode(
-            x=alt.X("pre_period_start"), color=alt.value("grey"))
+    base_vlines["pre_period_start"] = (
+        alt.Chart(plot_df)
+        .mark_rule(strokeDash=[5, 5])
+        .encode(x=alt.X("pre_period_start"), color=alt.value("grey"))
+    )
   # Only draw a line at the end of the pre-period if there are points between
   # it and the start of the post-period.
-  if any((plot_df["time"] > pre_period_end)
-         & (plot_df["time"] < post_period_start)):
-    base_vlines["pre_period_end"] = alt.Chart(plot_df).mark_rule(
-        strokeDash=[5, 5]).encode(
-            x=alt.X("pre_period_end"), color=alt.value("grey"))
+  if any(
+      (plot_df["time"] > pre_period_end) & (plot_df["time"] < post_period_start)
+  ):
+    base_vlines["pre_period_end"] = (
+        alt.Chart(plot_df)
+        .mark_rule(strokeDash=[5, 5])
+        .encode(x=alt.X("pre_period_end"), color=alt.value("grey"))
+    )
 
   # Always draw when the post-period starts.
-  base_vlines["post_period_start"] = alt.Chart(plot_df).mark_rule(
-      strokeDash=[5, 5]).encode(
-          x=alt.X("post_period_start"), color=alt.value("grey"))
+  base_vlines["post_period_start"] = (
+      alt.Chart(plot_df)
+      .mark_rule(strokeDash=[5, 5])
+      .encode(x=alt.X("post_period_start"), color=alt.value("grey"))
+  )
 
   # Only draw line at the end of the post-period if there are points after it.
   if any(plot_df["time"] > post_period_end):
-    base_vlines["post_period_end"] = alt.Chart(plot_df).mark_rule(
-        strokeDash=[5, 5]).encode(
-            x=alt.X("post_period_end"), color=alt.value("grey"))
+    base_vlines["post_period_end"] = (
+        alt.Chart(plot_df)
+        .mark_rule(strokeDash=[5, 5])
+        .encode(x=alt.X("post_period_end"), color=alt.value("grey"))
+    )
 
   # Return the base plot components.
   return {
       "lines": base_lines,
       "band": base_band,
       "hline": base_hline,
-      "vlines": base_vlines
+      "vlines": base_vlines,
   }
 
 
@@ -533,26 +571,35 @@ def _draw_classic_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
       legend=alt.Legend(
           title="",
           labelFontSize=kwargs["axis_label_font_size"],
-          symbolSize=10 * kwargs["axis_label_font_size"]))
+          symbolSize=10 * kwargs["axis_label_font_size"],
+      ),
+  )
   layers["lines"] = layers["lines"].encode(color=color_spec)
 
   # Unpack the vertical rule chart objects into a list; combine with the other
   # chart layers into a tuple that can be passed to alt.layer() to create the
   # final plot.
   vlines = list(layers["vlines"].values())
-  chart_layers = tuple([layers["lines"], layers["band"], layers["hline"]] +
-                       vlines)
-  final_plot = alt.layer(
-      *chart_layers, data=plot_df).facet(
+  chart_layers = tuple(
+      [layers["lines"], layers["band"], layers["hline"]] + vlines
+  )
+  final_plot = (
+      alt.layer(*chart_layers, data=plot_df)
+      .facet(
           row=alt.Row(
               "scale_pretty:N",
               sort=["Original", "Pointwise", "Cumulative"],
-              title="")).resolve_scale(y="independent").configure(
-                  background="white").configure_axis(
-                      titleFontSize=kwargs["axis_title_font_size"],
-                      labelFontSize=kwargs["axis_label_font_size"]
-                  ).configure_header(
-                      labelFontSize=kwargs["strip_title_font_size"])
+              title="",
+          )
+      )
+      .resolve_scale(y="independent")
+      .configure(background="white")
+      .configure_axis(
+          titleFontSize=kwargs["axis_title_font_size"],
+          labelFontSize=kwargs["axis_label_font_size"],
+      )
+      .configure_header(labelFontSize=kwargs["strip_title_font_size"])
+  )
   return final_plot
 
 
@@ -580,12 +627,20 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
 
   # Mini-chart as interactive legend to choose which stat to display.
   stat_selection = alt.selection_point(fields=["stat_pretty"])
-  selection_color = alt.condition(stat_selection,
-                                  alt.Color("stat_pretty:N", legend=None),
-                                  alt.value("lightgray"))
-  legend = alt.Chart(plot_df).mark_point().encode(
-      y=alt.Y("stat_pretty:N", axis=alt.Axis(orient="right"), title=""),
-      color=selection_color).add_selection(stat_selection)
+  selection_color = alt.condition(
+      stat_selection,
+      alt.Color("stat_pretty:N", legend=None),
+      alt.value("lightgray"),
+  )
+  legend = (
+      alt.Chart(plot_df)
+      .mark_point()
+      .encode(
+          y=alt.Y("stat_pretty:N", axis=alt.Axis(orient="right"), title=""),
+          color=selection_color,
+      )
+      .add_selection(stat_selection)
+  )
 
   # ############################################################################
   # Create the static top chart.
@@ -602,9 +657,12 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
       legend=alt.Legend(
           title="",
           labelFontSize=kwargs["axis_label_font_size"],
-          symbolSize=10 * kwargs["axis_label_font_size"]))
+          symbolSize=10 * kwargs["axis_label_font_size"],
+      ),
+  )
   static_layers["lines"] = static_layers["lines"].encode(
-      color=static_color_spec)
+      color=static_color_spec
+  )
   static_layers["band"] = static_layers["band"].add_params(brush)
 
   # Combine layers of static top chart. Add the brush selection to the band
@@ -612,17 +670,21 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
   # zoom in on (you only need to put it on one layer, so it could also have been
   # added to the lines layer).
   row_spec = alt.Row(
-      "scale_pretty:N", sort=["Original", "Pointwise", "Cumulative"], title="")
+      "scale_pretty:N", sort=["Original", "Pointwise", "Cumulative"], title=""
+  )
   # Unpack the vertical rule chart objects into a list; combine with the other
   # chart layers into a tuple that can be passed to alt.layer to create the
   # full static plot.
   static_vlines = list(static_layers["vlines"].values())
   top_chart_layers = tuple(
-      [static_layers["lines"], static_layers["band"], static_layers["hline"]] +
-      static_vlines)
-  top_static_plot = alt.layer(
-      *top_chart_layers,
-      data=static_df).facet(row=row_spec).resolve_scale(y="independent")
+      [static_layers["lines"], static_layers["band"], static_layers["hline"]]
+      + static_vlines
+  )
+  top_static_plot = (
+      alt.layer(*top_chart_layers, data=static_df)
+      .facet(row=row_spec)
+      .resolve_scale(y="independent")
+  )
 
   # ############################################################################
   # Create the dynamic charts that will zoom upon selection on the static top
@@ -633,24 +695,30 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
   dynamic_layers = _create_base_layers(plot_df, **kwargs)
   dynamic_layers["lines"] = dynamic_layers["lines"].encode(
       color=selection_color,
-      x=alt.X("time", scale=alt.Scale(domain=brush), title="Time"))
+      x=alt.X("time", scale=alt.Scale(domain=brush), title="Time"),
+  )
   dynamic_layers["band"] = dynamic_layers["band"].encode(
-      x=alt.X("time", scale=alt.Scale(domain=brush), title="Time"))
+      x=alt.X("time", scale=alt.Scale(domain=brush), title="Time")
+  )
 
   # Add interactive selections to each of the vertical line chart objects.
   for vline_date, vline_object in dynamic_layers["vlines"].items():
     dynamic_layers["vlines"][vline_date] = vline_object.encode(
-        x=alt.X(vline_date, scale=alt.Scale(domain=brush)))
+        x=alt.X(vline_date, scale=alt.Scale(domain=brush))
+    )
 
   # Combine the dynamic chart layers into a tuple that can be used with
   # alt.layer() to create the full dynamic plot.
   dynamic_vlines = list(dynamic_layers["vlines"].values())
-  bottom_chart_layers = tuple([
-      dynamic_layers["lines"], dynamic_layers["band"], dynamic_layers["hline"]
-  ] + dynamic_vlines)
-  bottom_dynamic_plot = alt.layer(
-      *bottom_chart_layers,
-      data=plot_df).facet(row=row_spec).resolve_scale(y="independent")
+  bottom_chart_layers = tuple(
+      [dynamic_layers["lines"], dynamic_layers["band"], dynamic_layers["hline"]]
+      + dynamic_vlines
+  )
+  bottom_dynamic_plot = (
+      alt.layer(*bottom_chart_layers, data=plot_df)
+      .facet(row=row_spec)
+      .resolve_scale(y="independent")
+  )
 
   # ############################################################################
   # Create the final chart.
@@ -659,7 +727,12 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
   # First, vertically concatenate the static and dynamic charts, then
   # horizontally concatenate with little interactive legend chart.
   final_chart = alt.vconcat(top_static_plot, bottom_dynamic_plot)
-  return (final_chart | legend).configure(background="white").configure_axis(
-      titleFontSize=kwargs["axis_title_font_size"],
-      labelFontSize=kwargs["axis_label_font_size"]).configure_header(
-          labelFontSize=kwargs["strip_title_font_size"])
+  return (
+      (final_chart | legend)
+      .configure(background="white")
+      .configure_axis(
+          titleFontSize=kwargs["axis_title_font_size"],
+          labelFontSize=kwargs["axis_label_font_size"],
+      )
+      .configure_header(labelFontSize=kwargs["strip_title_font_size"])
+  )
