@@ -46,10 +46,10 @@ def parse_and_validate_date_data(
     A converted pre_period and post_period, which are all of the same type as
     `data.index`.
   """
-  pre_period = tuple([_convert_date_to_index_type(p, data) for p in pre_period])
-  post_period = tuple(
+  pre_period = tuple([_convert_date_to_index_type(p, data) for p in pre_period])  # pyrefly: ignore[bad-assignment]
+  post_period = tuple(  # pyrefly: ignore[bad-assignment]
       [_convert_date_to_index_type(p, data) for p in post_period])
-  pre_period, post_period = _parse_and_validate_periods(pre_period, post_period,
+  pre_period, post_period = _parse_and_validate_periods(pre_period, post_period,  # pyrefly: ignore[bad-argument-type]
                                                         data)
   return pre_period, post_period
 
@@ -83,14 +83,14 @@ def _parse_and_validate_periods(
                                 & (data.index <= checked_pre_period[1])]
 
   # Make sure pre/post periods make sense.
-  if checked_pre_period[1] >= checked_post_period[0]:
+  if checked_pre_period[1] >= checked_post_period[0]:  # pyrefly: ignore[unsupported-operation]
     raise ValueError("pre_period and post_period cannot overlap.")
   if len(pre_period_dates) < 3:
     raise ValueError("pre_period must span at least 3 time points. Got %s" %
                      len(pre_period_dates))
-  if checked_pre_period[1] < checked_pre_period[0]:
+  if checked_pre_period[1] < checked_pre_period[0]:  # pyrefly: ignore[unsupported-operation]
     raise ValueError("pre_period last number must be bigger than its first.")
-  if checked_post_period[1] < checked_post_period[0]:
+  if checked_post_period[1] < checked_post_period[0]:  # pyrefly: ignore[unsupported-operation]
     raise ValueError("post_period last number must be bigger than its first.")
 
   return (checked_pre_period, checked_post_period)
@@ -116,7 +116,7 @@ def _check_period(period: OutputPeriodType,
                 if period not given in order.
   """
   # Check that the dates are in order.
-  if period[0] > period[1]:
+  if period[0] > period[1]:  # pyrefly: ignore[unsupported-operation]
     raise ValueError(f"Period end must be after period start. Got {period}")
 
   # Allow indices (or more likely) dates that are not aligned with the original

@@ -86,7 +86,7 @@ def process_posterior_quantities(ci_data: cid.CausalImpactData,
   """
   # If the data used for modeling were scaled, first undo the scaling.
   if ci_data.standardize_data:
-    vals_to_process = ci_data.outcome_scaler.inverse_transform(vals_to_process)
+    vals_to_process = ci_data.outcome_scaler.inverse_transform(vals_to_process)  # pyrefly: ignore[missing-attribute]
   # Transpose so that rows are again time points and columns are samples.
   vals_to_process = np.transpose(vals_to_process)
 
