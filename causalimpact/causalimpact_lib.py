@@ -284,7 +284,7 @@ def fit_causalimpact(data: pd.DataFrame,
         prior_level_sd=model_options.prior_level_sd,
         seed=seed,
         num_results=inference_options.num_results,
-        num_warmup_steps=inference_options.num_warmup_steps,
+        num_warmup_steps=inference_options.num_warmup_steps,  # pyrefly: ignore[bad-argument-type]
         model=experimental_model,
         dtype=data_options.dtype,
         seasons=model_options.seasons,
@@ -424,7 +424,7 @@ def _build_default_gibbs_model(
   local_level_prior_sample_size = tf.constant(32., dtype=dtype)
 
   level_concentration = tf.cast(local_level_prior_sample_size / 2., dtype=dtype)
-  level_variance_prior_scale = level_scale * level_scale * (
+  level_variance_prior_scale = level_scale * level_scale * (  # pyrefly: ignore[unsupported-operation]
       local_level_prior_sample_size / 2.)
 
   level_variance_prior = tfd.InverseGamma(
@@ -682,7 +682,7 @@ def _compute_impact(
   # trajectories for point, cumulative point, and relative effect estimates.
   trajectory_dict = _compute_impact_trajectories(
       posterior_trajectories,
-      observed_ts_full,
+      observed_ts_full,  # pyrefly: ignore[bad-argument-type]
       treatment_start=ci_data.post_period[0])
 
   # Create time series of mean and lower/upper quantiles for the point and
@@ -690,7 +690,7 @@ def _compute_impact(
   series = _compute_impact_estimates(
       posterior_trajectory_summary=posterior_trajectory_summary,
       trajectory_dict=trajectory_dict,
-      observed_ts_full=observed_ts_full,
+      observed_ts_full=observed_ts_full,  # pyrefly: ignore[bad-argument-type]
       ci_data=ci_data,
       quantiles=quantiles)
 
