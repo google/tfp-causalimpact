@@ -894,7 +894,8 @@ def _compute_impact_estimates(posterior_trajectory_summary: pd.DataFrame,
       point_effects_mean, point_effects_quantiles, cum_effects_mean,
       cum_effects_quantiles
   ],
-                               axis=1)
+                               axis=1,
+                               sort=True)
 
   # The in-between period and after post-period should only have observed and
   # posteriors (to match original).
@@ -919,7 +920,7 @@ def _compute_impact_estimates(posterior_trajectory_summary: pd.DataFrame,
   # Thus change the index to match the original data, then copy over the entire
   # original timeseries.
   impact_estimates = impact_estimates.reindex(
-      ci_data.data.index, copy=False, fill_value=np.nan)
+      ci_data.data.index, fill_value=np.nan)
   impact_estimates["observed"] = ci_data.data[ci_data.outcome_column]
 
   # Add the pre/post period dates as columns for easier plotting.

@@ -19,7 +19,7 @@ dependencies = [
     "numpy",
     "pandas",
     "tensorflow",
-    "tensorflow-probability"
+    "tensorflow-probability[tf]"
 ]
 
 dynamic = ["version"]

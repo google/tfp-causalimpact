@@ -15,6 +15,9 @@ _pycache__/
 # Other
 *.DS_Store
 
+# Build artifacts
+/dist/
+
 # IDEs
 .idea
 .vscode/

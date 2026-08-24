@@ -35,10 +35,10 @@ def _draw_matplotlib_plot(plot_df, **plot_params):
 
   def _helper_vertical_lines(plot_df, ax):
     # Vertical line at pre-period end and post-period end
-    pre_period_start = plot_df["pre_period_start"][0]
-    pre_period_end = plot_df["pre_period_end"][0]
-    post_period_start = plot_df["post_period_start"][0]
-    post_period_end = plot_df["post_period_end"][0]
+    pre_period_start = plot_df["pre_period_start"].iloc[0]
+    pre_period_end = plot_df["pre_period_end"].iloc[0]
+    post_period_start = plot_df["post_period_start"].iloc[0]
+    post_period_end = plot_df["post_period_end"].iloc[0]
     # Only draw a line at the start of the pre-period if there are points before
     # it.
     if any(plot_df["time"] < pre_period_start):
@@ -276,7 +276,7 @@ def _create_plot_df(series: pd.DataFrame, alpha: float = 0.05) -> pd.DataFrame:
       a `zero` column to draw a horizontal reference line for the absolute and
       cumulative effect plots.
   """
-  series["time"] = series.index
+  series = series.assign(time=series.index)
 
   # Create dataframes for each component of the plot (lines and uncertainty
   # bands, and standard devation-based uncertainty bands if requested).
@@ -471,10 +471,10 @@ def _create_base_layers(plot_df: pd.DataFrame, **kwargs):
   base_vlines = {}
   # Since pre_period_end and post_period_start are columns in plot_df, we can
   # just take the values in the first row in those columns.
-  pre_period_start = plot_df["pre_period_start"][0]
-  pre_period_end = plot_df["pre_period_end"][0]
-  post_period_start = plot_df["post_period_start"][0]
-  post_period_end = plot_df["post_period_end"][0]
+  pre_period_start = plot_df["pre_period_start"].iloc[0]
+  pre_period_end = plot_df["pre_period_end"].iloc[0]
+  post_period_start = plot_df["post_period_start"].iloc[0]
+  post_period_end = plot_df["post_period_end"].iloc[0]
 
   # Only draw a line at the start of the pre-period if there are points before
   # it.
@@ -585,7 +585,7 @@ def _draw_interactive_plot(plot_df: pd.DataFrame, **kwargs) -> alt.Chart:
                                   alt.value("lightgray"))
   legend = alt.Chart(plot_df).mark_point().encode(
       y=alt.Y("stat_pretty:N", axis=alt.Axis(orient="right"), title=""),
-      color=selection_color).add_selection(stat_selection)
+      color=selection_color).add_params(stat_selection)
 
   # ############################################################################
   # Create the static top chart.

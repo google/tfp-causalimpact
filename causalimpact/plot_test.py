@@ -762,8 +762,8 @@ class PlotTest(parameterized.TestCase):
         posterior_samples=[])
 
   def testCreatePlotComponentDF_lines(self):
-    lines_df = _create_plot_component_df(
-        self.ci_data_1.series, component="lines")
+    series = self.ci_data_1.series.assign(time=self.ci_data_1.series.index)
+    lines_df = _create_plot_component_df(series, component="lines")
     expected_cols = [
         "time", "post_period_start", "post_period_end", "pre_period_start",
         "pre_period_end", "value", "scale", "stat"
@@ -783,8 +783,8 @@ class PlotTest(parameterized.TestCase):
       },
   ])
   def testCreatePlotComponentDF_bands(self, component, method):
-    bands_df = _create_plot_component_df(
-        self.ci_data_2.series, component=component)
+    series = self.ci_data_2.series.assign(time=self.ci_data_2.series.index)
+    bands_df = _create_plot_component_df(series, component=component)
     expected_cols = [
         "time", "post_period_start", "post_period_end", "pre_period_start",
         "pre_period_end", "lower", "upper", "scale", "band_method"

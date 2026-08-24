@@ -60,7 +60,7 @@ class StandardizeTest(absltest.TestCase):
         'x1': [4., 5., 6.],
         'x2': [100., 101., 102.],
     },
-                      index=pd.date_range('2022-01-01', periods=3, freq='H'))
+                      index=pd.date_range('2022-01-01', periods=3, freq='h'))
     scaler = standardize.Scaler()
     standardized_df = scaler.fit_transform(df)
 
@@ -70,7 +70,7 @@ class StandardizeTest(absltest.TestCase):
             'x1': [-1., 0., 1.],
             'x2': [-1., 0., 1.],
         },
-                     index=pd.date_range('2022-01-01', periods=3, freq='H')),
+                     index=pd.date_range('2022-01-01', periods=3, freq='h')),
         standardized_df)
 
     # Expected to be back to the original.
@@ -82,7 +82,7 @@ class StandardizeTest(absltest.TestCase):
             'x1': [4., 5., float('nan'), 6.],
             'x2': [98., float('nan'), 102., 106.],
         },
-        index=pd.date_range('2022-01-01', periods=4, freq='H'))
+        index=pd.date_range('2022-01-01', periods=4, freq='h'))
     scaler = standardize.Scaler()
     standardized_df = scaler.fit_transform(df)
 
@@ -93,7 +93,7 @@ class StandardizeTest(absltest.TestCase):
                 'x1': [-1., 0., float('nan'), 1.],
                 'x2': [-1., float('nan'), 0., 1.],
             },
-            index=pd.date_range('2022-01-01', periods=4, freq='H')),
+            index=pd.date_range('2022-01-01', periods=4, freq='h')),
         standardized_df)
 
   def testSubscriptAllowsPartialStandardization(self):
@@ -101,7 +101,7 @@ class StandardizeTest(absltest.TestCase):
         'x1': [4., 5., 6.],
         'x2': [98., 102., 106.],
     },
-                      index=pd.date_range('2022-01-01', periods=3, freq='H'))
+                      index=pd.date_range('2022-01-01', periods=3, freq='h'))
     scaler = standardize.Scaler()
     standardized_df = scaler.fit_transform(df[['x1']])
 
@@ -110,7 +110,7 @@ class StandardizeTest(absltest.TestCase):
         pd.DataFrame({
             'x1': [-1., 0., 1.],
         },
-                     index=pd.date_range('2022-01-01', periods=3, freq='H')),
+                     index=pd.date_range('2022-01-01', periods=3, freq='h')),
         standardized_df)
 
 

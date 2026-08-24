@@ -212,7 +212,8 @@ class CausalImpactTest(parameterized.TestCase):
     df.drop(columns=["t"], inplace=True)
     # Explicitly set the frequency to match the input data, which is required.
     df.index.freq = "10s"
-    df.y[[1, 3, 7]] = np.nan  # Set a few pre-period observations to be missing.
+    # Set a few pre-period observations to be missing.
+    df.iloc[[1, 3, 7], df.columns.get_loc("y")] = np.nan
     cls.data = df
     treatment_start_index = 60
     cls.pre_period = (df.index[0], df.index[treatment_start_index - 1])
@@ -817,7 +818,7 @@ class TestPreAndPostPeriod(_CausalImpactBaseTest):
         "x1": np.random.randn(200),
         "x2": np.random.randn(200)
     })
-    data.y.iloc[2:5] = np.nan
+    data.iloc[2:5, data.columns.get_loc("y")] = np.nan
     impact = ci.fit_causalimpact(
         data,
         pre_period=(0, 100),
