@@ -159,7 +159,7 @@ def summary(
     raise ValueError("`format` must be either 'summary' or 'report'. "
                      "Got %s" % output_format)
 
-  if alpha <= 0. or alpha >= 1.:
+  if alpha <= 0. or alpha >= 1.:  # pyrefly: ignore[unsupported-operation]
     raise ValueError("`alpha` must be in (0, 1). Got %s" % alpha)
 
   p_value = ci_model.summary["p_value"][0]
