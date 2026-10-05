@@ -424,7 +424,7 @@ def _build_default_gibbs_model(
   local_level_prior_sample_size = tf.constant(32., dtype=dtype)
 
   level_concentration = tf.cast(local_level_prior_sample_size / 2., dtype=dtype)
-  level_variance_prior_scale = level_scale * level_scale * (  # pyrefly: ignore[unsupported-operation]
+  level_variance_prior_scale = level_scale * level_scale * (
       local_level_prior_sample_size / 2.)
 
   level_variance_prior = tfd.InverseGamma(
@@ -682,7 +682,7 @@ def _compute_impact(
   # trajectories for point, cumulative point, and relative effect estimates.
   trajectory_dict = _compute_impact_trajectories(
       posterior_trajectories,
-      observed_ts_full,  # pyrefly: ignore[bad-argument-type]
+      observed_ts_full,
       treatment_start=ci_data.post_period[0])
 
   # Create time series of mean and lower/upper quantiles for the point and
@@ -690,7 +690,7 @@ def _compute_impact(
   series = _compute_impact_estimates(
       posterior_trajectory_summary=posterior_trajectory_summary,
       trajectory_dict=trajectory_dict,
-      observed_ts_full=observed_ts_full,  # pyrefly: ignore[bad-argument-type]
+      observed_ts_full=observed_ts_full,
       ci_data=ci_data,
       quantiles=quantiles)
 
